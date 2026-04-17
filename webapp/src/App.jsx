@@ -76,34 +76,27 @@ export default function App() {
         tg?.initDataUnsafe?.user?.first_name || '',
         tg?.initDataUnsafe?.user?.last_name || '',
       ].filter(Boolean).join(' '),
+      // Include signed initData so the bot can verify authenticity if desired
+      initData: tg?.initData || '',
     };
 
     try {
-      // Try sending via Telegram Web App data first
-      if (tg?.sendData) {
-        tg.sendData(JSON.stringify(payload));
-        // Telegram will close the Mini App after sendData
-        // Set result optimistically
-        setResult({ priority: 'high', score: 0 });
-        setScreen(SCREENS.RESULT);
-      } else {
-        // Fallback: send via API
-        const res = await fetch(`${API_URL}/api/submit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const data = await res.json();
-        setResult(data);
-        setScreen(SCREENS.RESULT);
-      }
+      // Always submit via API — works regardless of how Mini App was launched
+      // (tg.sendData() only works from Reply Keyboard buttons, not Menu Button / direct link)
+      const res = await fetch(`${API_URL}/api/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      setResult(data.success ? data : { priority: 'high', score: 0 });
     } catch (err) {
       console.error('Submit error:', err);
-      // Still show result on error
+      // Network error — still show result so user isn't stuck
       setResult({ priority: 'high', score: 0 });
-      setScreen(SCREENS.RESULT);
     } finally {
       setSubmitting(false);
+      setScreen(SCREENS.RESULT);
     }
   }, [caseData, lang]);
 
