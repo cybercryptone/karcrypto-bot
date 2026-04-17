@@ -62,6 +62,15 @@ export function calculateScore(data) {
   return { total, priority, breakdown };
 }
 
+// Escape HTML special chars so user-supplied strings don't break Telegram's HTML parse mode.
+function esc(s) {
+  if (s === undefined || s === null) return '—';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export function formatAdminMessage(data, score) {
   const priorityLabel = {
     high: '🔴 HIGH',
@@ -84,23 +93,39 @@ export function formatAdminMessage(data, score) {
     unknown: "Don't know",
   };
 
+  const breakdown = score.breakdown.length ? esc(score.breakdown.join(', ')) : '—';
+  const name = data.name ? esc(data.name) : '—';
+  const username = data.telegramUsername ? '@' + esc(data.telegramUsername) : '—';
+  const tgId = data.telegramId ? esc(data.telegramId) : '—';
+  const email = data.email ? esc(data.email) : '—';
+  const issue = issueLabels[data.issueType] || esc(data.issueType) || '—';
+  const funds = fundLabels[data.fundsLocation] || esc(data.fundsLocation) || '—';
+  const amount = data.lossAmount ? esc(data.lossAmount) : '—';
+  const date = data.incidentDate ? esc(data.incidentDate) : '—';
+  const network = data.network ? esc(data.network) : '—';
+  const txHash = data.txHash ? esc(data.txHash) : '—';
+  const wallet = data.walletAddress ? esc(data.walletAddress) : '—';
+  const description = data.description ? esc(data.description) : '—';
+  const language = data.language ? esc(data.language) : '—';
+  const submittedAt = data.submittedAt ? esc(data.submittedAt) : '—';
+
   return (
     `<b>📋 New Case — ${priorityLabel[score.priority]}</b>\n` +
-    `<b>Score:</b> ${score.total} (${score.breakdown.join(', ')})\n\n` +
+    `<b>Score:</b> ${score.total} (${breakdown})\n\n` +
     `<b>👤 Contact</b>\n` +
-    `Name: ${data.name || '—'}\n` +
-    `Telegram: ${data.telegramUsername ? '@' + data.telegramUsername : '—'} (ID: ${data.telegramId || '—'})\n` +
-    `Email: ${data.email || '—'}\n\n` +
+    `Name: ${name}\n` +
+    `Telegram: ${username} (ID: ${tgId})\n` +
+    `Email: ${email}\n\n` +
     `<b>📌 Case Details</b>\n` +
-    `Issue: ${issueLabels[data.issueType] || data.issueType || '—'}\n` +
-    `Funds location: ${fundLabels[data.fundsLocation] || data.fundsLocation || '—'}\n` +
-    `Amount: ${data.lossAmount || '—'}\n` +
-    `Date: ${data.incidentDate || '—'}\n` +
-    `Network/Token: ${data.network || '—'}\n` +
-    `TX Hash: <code>${data.txHash || '—'}</code>\n` +
-    `Wallet: <code>${data.walletAddress || '—'}</code>\n\n` +
-    `<b>📝 Description</b>\n${data.description || '—'}\n\n` +
-    `<b>🌐 Language:</b> ${data.language || '—'}\n` +
-    `<b>🕐 Submitted:</b> ${data.submittedAt || '—'}`
+    `Issue: ${issue}\n` +
+    `Funds location: ${funds}\n` +
+    `Amount: ${amount}\n` +
+    `Date: ${date}\n` +
+    `Network/Token: ${network}\n` +
+    `TX Hash: <code>${txHash}</code>\n` +
+    `Wallet: <code>${wallet}</code>\n\n` +
+    `<b>📝 Description</b>\n${description}\n\n` +
+    `<b>🌐 Language:</b> ${language}\n` +
+    `<b>🕐 Submitted:</b> ${submittedAt}`
   );
 }
