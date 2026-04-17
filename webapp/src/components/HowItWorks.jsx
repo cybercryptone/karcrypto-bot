@@ -22,7 +22,7 @@ export default function HowItWorks({ t, onBack, onStart }) {
           {t.howItWorks.back}
         </button>
         <button className="btn-primary" onClick={onStart}>
-          {t.welcome.mySituation}
+          {t.welcome.submitRequest}
         </button>
       </div>
     </>

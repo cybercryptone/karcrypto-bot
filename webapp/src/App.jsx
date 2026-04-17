@@ -134,7 +134,6 @@ export default function App() {
           {screen === SCREENS.WELCOME && (
             <Welcome
               t={t}
-              onSituation={() => setScreen(SCREENS.CLASSIFY)}
               onSubmit={() => setScreen(SCREENS.CLASSIFY)}
               onHow={() => setScreen(SCREENS.HOW)}
               onLangChange={() => setScreen(SCREENS.LANG)}
