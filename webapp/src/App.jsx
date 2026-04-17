@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { translations } from './i18n/translations.js';
 import LanguageSelect from './components/LanguageSelect.jsx';
 import Welcome from './components/Welcome.jsx';
@@ -41,13 +41,21 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const [submitError, setSubmitError] = useState(null);
   const t = translations[lang];
 
-  // Expand Telegram Web App on open
-  if (tg) {
-    tg.ready();
-    tg.expand();
-  }
+  // Expand Telegram Web App on open + diagnostic ping
+  useEffect(() => {
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+    // Diagnostic ping — confirms webapp can reach bot API from user's client
+    fetch(`${API_URL}/api/ping?src=webapp&v=${Date.now()}`, {
+      method: 'GET',
+      cache: 'no-store',
+    }).catch(() => { /* silent: will show up as absence in diag log */ });
+  }, []);
 
   const handleLangSelect = useCallback((selectedLang) => {
     setLang(selectedLang);
@@ -66,6 +74,7 @@ export default function App() {
 
   const handleSubmit = useCallback(async () => {
     setSubmitting(true);
+    setSubmitError(null);
 
     const payload = {
       ...caseData,
@@ -76,27 +85,31 @@ export default function App() {
         tg?.initDataUnsafe?.user?.first_name || '',
         tg?.initDataUnsafe?.user?.last_name || '',
       ].filter(Boolean).join(' '),
-      // Include signed initData so the bot can verify authenticity if desired
       initData: tg?.initData || '',
     };
 
     try {
-      // Always submit via API — works regardless of how Mini App was launched
-      // (tg.sendData() only works from Reply Keyboard buttons, not Menu Button / direct link)
       const res = await fetch(`${API_URL}/api/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setResult(data.success ? data : { priority: 'high', score: 0 });
-    } catch (err) {
-      console.error('Submit error:', err);
-      // Network error — still show result so user isn't stuck
-      setResult({ priority: 'high', score: 0 });
-    } finally {
+      if (!data.success) throw new Error(data.error || 'submit failed');
+
+      setResult(data);
       setSubmitting(false);
       setScreen(SCREENS.RESULT);
+    } catch (err) {
+      console.error('Submit error:', err);
+      setSubmitting(false);
+      const errorMsg = err.message || 'Network error';
+      setSubmitError(errorMsg);
+      // Show error via Telegram alert if available, otherwise fall through to UI
+      if (tg?.showAlert) {
+        tg.showAlert(`Ошибка отправки: ${errorMsg}. Попробуйте ещё раз.`);
+      }
     }
   }, [caseData, lang]);
 

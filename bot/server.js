@@ -34,6 +34,11 @@ export function createServer(bot) {
     res.json({ status: 'ok', service: 'karcrypto-bot' });
   });
 
+  // Ping — called by webapp on load to confirm network reachability
+  app.get('/api/ping', (req, res) => {
+    res.json({ pong: true, ts: Date.now() });
+  });
+
   // Diagnostic: view recent requests (no secrets exposed)
   app.get('/api/diag', (req, res) => {
     res.json({ events: diagLog });
