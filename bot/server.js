@@ -48,7 +48,13 @@ export function createServer(bot) {
       });
     } catch (err) {
       console.error('Submit error:', err);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res.status(500).json({
+        success: false,
+        error: err.message || 'Internal server error',
+        hasToken: !!process.env.TELEGRAM_BOT_TOKEN,
+        hasAdminId: !!process.env.ADMIN_CHAT_ID,
+        hasSheetsUrl: !!process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+      });
     }
   });
 
