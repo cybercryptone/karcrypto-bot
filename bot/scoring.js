@@ -71,6 +71,11 @@ function esc(s) {
     .replace(/>/g, '&gt;');
 }
 
+// Returns true if a string has meaningful content (non-empty, non-whitespace).
+function has(v) {
+  return v !== undefined && v !== null && String(v).trim() !== '';
+}
+
 export function formatAdminMessage(data, score) {
   const priorityLabel = {
     high: '🔴 HIGH',
@@ -93,39 +98,63 @@ export function formatAdminMessage(data, score) {
     unknown: "Don't know",
   };
 
-  const breakdown = score.breakdown.length ? esc(score.breakdown.join(', ')) : '—';
-  const name = data.name ? esc(data.name) : '—';
-  const username = data.telegramUsername ? '@' + esc(data.telegramUsername) : '—';
-  const tgId = data.telegramId ? esc(data.telegramId) : '—';
-  const email = data.email ? esc(data.email) : '—';
-  const issue = issueLabels[data.issueType] || esc(data.issueType) || '—';
-  const funds = fundLabels[data.fundsLocation] || esc(data.fundsLocation) || '—';
-  const amount = data.lossAmount ? esc(data.lossAmount) : '—';
-  const date = data.incidentDate ? esc(data.incidentDate) : '—';
-  const network = data.network ? esc(data.network) : '—';
-  const txHash = data.txHash ? esc(data.txHash) : '—';
-  const wallet = data.walletAddress ? esc(data.walletAddress) : '—';
-  const description = data.description ? esc(data.description) : '—';
-  const language = data.language ? esc(data.language) : '—';
-  const submittedAt = data.submittedAt ? esc(data.submittedAt) : '—';
+  // Collect only populated lines for each section.
+  const contactLines = [];
+  if (has(data.name)) contactLines.push(`Name: ${esc(data.name)}`);
+  if (has(data.telegramUsername) || has(data.telegramId)) {
+    const u = has(data.telegramUsername) ? '@' + esc(data.telegramUsername) : '';
+    const id = has(data.telegramId) ? ` (ID: ${esc(data.telegramId)})` : '';
+    contactLines.push(`Telegram: ${u}${id}`.trim());
+  }
+  if (has(data.email)) contactLines.push(`Email: ${esc(data.email)}`);
 
-  return (
-    `<b>📋 New Case — ${priorityLabel[score.priority]}</b>\n` +
-    `<b>Score:</b> ${score.total} (${breakdown})\n\n` +
-    `<b>👤 Contact</b>\n` +
-    `Name: ${name}\n` +
-    `Telegram: ${username} (ID: ${tgId})\n` +
-    `Email: ${email}\n\n` +
-    `<b>📌 Case Details</b>\n` +
-    `Issue: ${issue}\n` +
-    `Funds location: ${funds}\n` +
-    `Amount: ${amount}\n` +
-    `Date: ${date}\n` +
-    `Network/Token: ${network}\n` +
-    `TX Hash: <code>${txHash}</code>\n` +
-    `Wallet: <code>${wallet}</code>\n\n` +
-    `<b>📝 Description</b>\n${description}\n\n` +
-    `<b>🌐 Language:</b> ${language}\n` +
-    `<b>🕐 Submitted:</b> ${submittedAt}`
-  );
+  const caseLines = [];
+  if (has(data.issueType)) {
+    caseLines.push(`Issue: ${issueLabels[data.issueType] || esc(data.issueType)}`);
+  }
+  if (has(data.fundsLocation)) {
+    caseLines.push(`Funds location: ${fundLabels[data.fundsLocation] || esc(data.fundsLocation)}`);
+  }
+  if (has(data.lossAmount)) caseLines.push(`Amount: ${esc(data.lossAmount)}`);
+  if (has(data.incidentDate)) caseLines.push(`Date: ${esc(data.incidentDate)}`);
+  if (has(data.network)) caseLines.push(`Network/Token: ${esc(data.network)}`);
+  if (has(data.txHash)) caseLines.push(`TX Hash: <code>${esc(data.txHash)}</code>`);
+  if (has(data.walletAddress)) caseLines.push(`Wallet: <code>${esc(data.walletAddress)}</code>`);
+
+  const breakdown = score.breakdown.length ? esc(score.breakdown.join(', ')) : '';
+
+  const sections = [
+    `<b>📋 New Case — ${priorityLabel[score.priority]}</b>`,
+    breakdown
+      ? `<b>Score:</b> ${score.total} (${breakdown})`
+      : `<b>Score:</b> ${score.total}`,
+  ];
+
+  if (contactLines.length) {
+    sections.push('');
+    sections.push('<b>👤 Contact</b>');
+    sections.push(contactLines.join('\n'));
+  }
+
+  if (caseLines.length) {
+    sections.push('');
+    sections.push('<b>📌 Case Details</b>');
+    sections.push(caseLines.join('\n'));
+  }
+
+  if (has(data.description)) {
+    sections.push('');
+    sections.push('<b>📝 Description</b>');
+    sections.push(esc(data.description));
+  }
+
+  const metaLines = [];
+  if (has(data.language)) metaLines.push(`<b>🌐 Language:</b> ${esc(data.language)}`);
+  if (has(data.submittedAt)) metaLines.push(`<b>🕐 Submitted:</b> ${esc(data.submittedAt)}`);
+  if (metaLines.length) {
+    sections.push('');
+    sections.push(metaLines.join('\n'));
+  }
+
+  return sections.join('\n');
 }
