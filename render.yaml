@@ -1,0 +1,51 @@
+# Render Blueprint — one file deploys both services
+# Docs: https://render.com/docs/blueprint-spec
+#
+# After deploying:
+# 1. Set TELEGRAM_BOT_TOKEN, ADMIN_CHAT_ID, GOOGLE_SHEETS_WEBHOOK_URL in Render dashboard
+#    (they are marked sync:false — must be set manually)
+# 2. Update WEBAPP_URL and WEBHOOK_URL with actual Render URLs after first deploy
+# 3. Set VITE_API_URL in webapp service with the bot's URL
+
+services:
+  # ─── Mini App frontend (static site) ───
+  - type: web
+    name: karcrypto-webapp
+    runtime: static
+    rootDir: webapp
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false  # Set to https://karcrypto-bot.onrender.com after bot deploys
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: ALLOWALL
+
+  # ─── Bot backend (Node.js web service) ───
+  - type: web
+    name: karcrypto-bot
+    runtime: node
+    rootDir: .
+    plan: free
+    buildCommand: npm install
+    startCommand: node bot/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false  # Set manually in dashboard (secret)
+      - key: ADMIN_CHAT_ID
+        sync: false  # Set manually in dashboard
+      - key: WEBAPP_URL
+        sync: false  # Set to https://karcrypto-webapp.onrender.com after webapp deploys
+      - key: WEBHOOK_URL
+        sync: false  # Set to https://karcrypto-bot.onrender.com (this service's URL)
+      - key: GOOGLE_SHEETS_WEBHOOK_URL
+        sync: false  # Set manually in dashboard
+      - key: NODE_VERSION
+        value: "20"

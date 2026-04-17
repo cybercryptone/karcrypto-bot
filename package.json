@@ -1,0 +1,28 @@
+{
+  "name": "karcrypto-telegram-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node bot/index.js",
+    "bot": "node bot/index.js",
+    "dev:webapp": "cd webapp && npm run dev",
+    "build:webapp": "cd webapp && npm run build",
+    "dev": "concurrently \"npm run bot\" \"npm run dev:webapp\"",
+    "install:all": "npm install && cd webapp && npm install"
+  },
+  "dependencies": {
+    "grammy": "^1.21.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "google-spreadsheet": "^4.1.1",
+    "google-auth-library": "^9.6.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
