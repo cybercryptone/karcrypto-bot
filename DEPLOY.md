@@ -6,8 +6,8 @@ Deploy both the Mini App (webapp) and the bot backend to [Render](https://render
 
 1. Open Telegram, search `@BotFather`
 2. Send `/newbot`
-3. Choose a name: `KarCrypto Support`
-4. Choose a username: e.g. `karcrypto_support_bot`
+3. Choose a name: `KarCrypto`
+4. Choose a username: `karcrypto_bot`
 5. Save the token BotFather gives you (looks like `123456:ABC-xyz...`) → this is your **`TELEGRAM_BOT_TOKEN`**
 6. Send `/setdomain` → select your bot → you'll add the webapp URL here **after step 3** (once you have it)
 

@@ -1,4 +1,24 @@
 const TG_CHANNEL = 'https://t.me/KarCrypto97';
+const WEBSITE_URL = 'https://karcrypto.com';
+const SUPPORT_CONTACT = 'https://t.me/KarCryptoSupport';
+
+const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : null;
+
+function openExternalLink(url) {
+  if (tg?.openLink) {
+    tg.openLink(url);
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+
+function openTelegramLink(url) {
+  if (tg?.openTelegramLink) {
+    tg.openTelegramLink(url);
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
 
 export default function Result({ t, result }) {
   const priority = result?.priority || 'medium';
@@ -36,19 +56,22 @@ export default function Result({ t, result }) {
           {t.result.nextSteps}
         </h3>
         <div className="result-cta">
-          <button className="btn-primary">
-            {t.result.cta.consult}
+          <button className="btn-primary" onClick={() => openExternalLink(WEBSITE_URL)}>
+            {t.result.cta.visitWebsite}
           </button>
-          <button className="btn-secondary">
-            {t.result.cta.analysis}
-          </button>
-          <button className="btn-secondary">
+          <button className="btn-secondary" onClick={() => openTelegramLink(SUPPORT_CONTACT)}>
             {t.result.cta.contact}
           </button>
         </div>
       </div>
 
-      <a href={TG_CHANNEL} target="_blank" rel="noopener noreferrer" className="tg-banner">
+      <a
+        href={TG_CHANNEL}
+        onClick={(e) => { e.preventDefault(); openTelegramLink(TG_CHANNEL); }}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="tg-banner"
+      >
         <span className="tg-banner-text">{t.telegram.subscribe}</span>
         <span className="tg-banner-desc">{t.telegram.subscribeDesc}</span>
       </a>

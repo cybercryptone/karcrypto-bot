@@ -88,8 +88,7 @@ export const translations = {
       },
       nextSteps: 'Следующие шаги',
       cta: {
-        consult: '📞 Получить разбор кейса',
-        analysis: '🧠 Запросить анализ транзакций',
+        visitWebsite: '🌐 Перейти на сайт',
         contact: '💬 Связаться со специалистом',
       },
     },
@@ -184,8 +183,7 @@ export const translations = {
       },
       nextSteps: 'Next Steps',
       cta: {
-        consult: '📞 Get Case Review',
-        analysis: '🧠 Request TX Analysis',
+        visitWebsite: '🌐 Visit the Website',
         contact: '💬 Contact Specialist',
       },
     },
@@ -279,8 +277,7 @@ export const translations = {
       },
       nextSteps: 'Próximos Pasos',
       cta: {
-        consult: '📞 Obtener Revisión',
-        analysis: '🧠 Solicitar Análisis TX',
+        visitWebsite: '🌐 Visitar el Sitio',
         contact: '💬 Contactar Especialista',
       },
     },
@@ -374,8 +371,7 @@ export const translations = {
       },
       nextSteps: 'Prochaines Étapes',
       cta: {
-        consult: '📞 Obtenir une Analyse',
-        analysis: '🧠 Demander une Analyse TX',
+        visitWebsite: '🌐 Visiter le Site',
         contact: '💬 Contacter un Spécialiste',
       },
     },
@@ -469,8 +465,7 @@ export const translations = {
       },
       nextSteps: 'Nächste Schritte',
       cta: {
-        consult: '📞 Fallbewertung Erhalten',
-        analysis: '🧠 TX-Analyse Anfordern',
+        visitWebsite: '🌐 Website Besuchen',
         contact: '💬 Spezialisten Kontaktieren',
       },
     },
@@ -564,8 +559,7 @@ export const translations = {
       },
       nextSteps: '后续步骤',
       cta: {
-        consult: '📞 获取案例审查',
-        analysis: '🧠 请求交易分析',
+        visitWebsite: '🌐 访问网站',
         contact: '💬 联系专家',
       },
     },

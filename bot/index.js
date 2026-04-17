@@ -106,7 +106,7 @@ bot.on('message:web_app_data', async (ctx) => {
 bot.command('consult', async (ctx) => {
   await ctx.reply(
     '📞 Для получения разбора кейса свяжитесь с нами:\n\n' +
-    'Telegram: @karcrypto_support\n' +
+    'Telegram: @karcrypto_bot | Канал: @KarCrypto97\n' +
     'Email: cases@karcrypto.com'
   );
 });
@@ -121,7 +121,7 @@ bot.command('analysis', async (ctx) => {
 bot.command('contact', async (ctx) => {
   await ctx.reply(
     '💬 Связаться со специалистом:\n\n' +
-    'Telegram: @karcrypto_support\n' +
+    'Telegram: @karcrypto_bot | Канал: @KarCrypto97\n' +
     'Email: cases@karcrypto.com\n' +
     'Время ответа: до 15 минут в рабочие часы'
   );
