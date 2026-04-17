@@ -55,11 +55,9 @@ export function calculateScore(data) {
     breakdown.push('-2 insufficient data');
   }
 
-  // Determine priority
-  let priority;
-  if (total >= 4) priority = 'high';
-  else if (total >= 2) priority = 'medium';
-  else priority = 'low';
+  // Priority shown to the user: always "high" (every submitted case is treated as priority).
+  // Internal `total` score is still calculated above for admin triage in Telegram notifications.
+  const priority = 'high';
 
   return { total, priority, breakdown };
 }

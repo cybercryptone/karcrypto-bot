@@ -21,7 +21,7 @@ function openTelegramLink(url) {
 }
 
 export default function Result({ t, result }) {
-  const priority = result?.priority || 'medium';
+  const priority = result?.priority || 'high';
   const priorityData = t.result.priorities[priority];
 
   const priorityEmoji = {

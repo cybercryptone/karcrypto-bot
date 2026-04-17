@@ -84,7 +84,7 @@ export default function App() {
         tg.sendData(JSON.stringify(payload));
         // Telegram will close the Mini App after sendData
         // Set result optimistically
-        setResult({ priority: 'medium', score: 0 });
+        setResult({ priority: 'high', score: 0 });
         setScreen(SCREENS.RESULT);
       } else {
         // Fallback: send via API
@@ -100,7 +100,7 @@ export default function App() {
     } catch (err) {
       console.error('Submit error:', err);
       // Still show result on error
-      setResult({ priority: 'medium', score: 0 });
+      setResult({ priority: 'high', score: 0 });
       setScreen(SCREENS.RESULT);
     } finally {
       setSubmitting(false);
