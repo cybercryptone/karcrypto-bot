@@ -107,15 +107,22 @@ export function formatAdminMessage(data, score) {
     contactLines.push(`Telegram: ${u}${id}`.trim());
   }
   if (has(data.email)) contactLines.push(`Email: ${esc(data.email)}`);
+  // Website form has a generic `contact` free-text field (phone / email / telegram).
+  if (has(data.contact)) contactLines.push(`Contact: ${esc(data.contact)}`);
 
   const caseLines = [];
   if (has(data.issueType)) {
     caseLines.push(`Issue: ${issueLabels[data.issueType] || esc(data.issueType)}`);
   }
+  // Website form uses free-text `problem` chips (multi-select joined by comma).
+  if (has(data.problem)) caseLines.push(`Problem: ${esc(data.problem)}`);
   if (has(data.fundsLocation)) {
     caseLines.push(`Funds location: ${fundLabels[data.fundsLocation] || esc(data.fundsLocation)}`);
   }
+  // Website form uses `exchange` name directly (Binance/Bybit/OKX/etc.).
+  if (has(data.exchange)) caseLines.push(`Exchange: ${esc(data.exchange)}`);
   if (has(data.lossAmount)) caseLines.push(`Amount: ${esc(data.lossAmount)}`);
+  if (has(data.amount)) caseLines.push(`Amount: ${esc(data.amount)}`);
   if (has(data.incidentDate)) caseLines.push(`Date: ${esc(data.incidentDate)}`);
   if (has(data.network)) caseLines.push(`Network/Token: ${esc(data.network)}`);
   if (has(data.txHash)) caseLines.push(`TX Hash: <code>${esc(data.txHash)}</code>`);
@@ -149,6 +156,8 @@ export function formatAdminMessage(data, score) {
   }
 
   const metaLines = [];
+  if (has(data.source)) metaLines.push(`<b>📍 Source:</b> ${esc(data.source)}`);
+  if (has(data.page)) metaLines.push(`<b>🔗 Page:</b> ${esc(data.page)}`);
   if (has(data.language)) metaLines.push(`<b>🌐 Language:</b> ${esc(data.language)}`);
   if (has(data.submittedAt)) metaLines.push(`<b>🕐 Submitted:</b> ${esc(data.submittedAt)}`);
   if (metaLines.length) {

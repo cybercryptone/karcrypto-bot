@@ -49,8 +49,14 @@ export function createServer(bot) {
     try {
       const data = req.body;
 
+      // Auto-detect source: Mini App submissions have telegramId, website forms don't.
+      // Mini App payloads include initData (signed launch params from Telegram).
+      const isMiniApp = !!(data.telegramId || data.initData);
+      const source = data.source || (isMiniApp ? 'telegram-mini-app' : 'website');
+
       const caseData = {
         ...data,
+        source,
         submittedAt: new Date().toISOString(),
       };
 
